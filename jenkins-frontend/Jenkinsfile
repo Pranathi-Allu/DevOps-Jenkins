@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        nodejs 'node18' 
+        nodejs 'node18'
     }
 
     stages {
@@ -15,20 +15,25 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'npm install'
+                dir('jenkins-frontend') {
+                    sh 'npm install'
+                }
             }
         }
 
         stage('Build React App') {
             steps {
-                sh 'npm run build'
+                dir('jenkins-frontend') {
+                    sh 'npm run build'
+                }
             }
         }
 
         stage('Success') {
             steps {
-                echo 'Build Successful '
+                echo 'React App Build Successful!'
             }
         }
+
     }
 }
