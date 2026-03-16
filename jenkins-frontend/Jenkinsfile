@@ -16,24 +16,28 @@ pipeline {
         }
 
         stage('Build Docker Image') {
-            steps {
-                script {
-                    echo "Building Docker Image: ${DOCKER_HUB_USER}/${DOCKER_IMAGE}:${TAG}..."
-                    sh "docker build -t ${DOCKER_HUB_USER}/${DOCKER_IMAGE}:${TAG} -t ${DOCKER_HUB_USER}/${DOCKER_IMAGE}:latest ."
-                }
+    steps {
+        script {
+            dir('jenkins-frontend') {  
+                echo "Building Docker Image: ${DOCKER_HUB_USER}/${DOCKER_IMAGE}:${TAG}..."
+                sh "docker build -t ${DOCKER_HUB_USER}/${DOCKER_IMAGE}:${TAG} -t ${DOCKER_HUB_USER}/${DOCKER_IMAGE}:latest ."
             }
         }
+    }
+}
 
-        stage('Test Docker Image') {
-            steps {
-                script {
-                    echo "Testing if the container runs..."
-                    sh """
-                        docker run -d --name temp-test-${TAG} -p 8085:80 ${DOCKER_HUB_USER}/${DOCKER_IMAGE}:${TAG}
-                    """
-                }
+stage('Test Docker Image') {
+    steps {
+        script {
+            dir('jenkins-frontend') {   
+                echo "Testing if the container runs..."
+                sh """
+                    docker run -d --name temp-test-${TAG} -p 8085:80 ${DOCKER_HUB_USER}/${DOCKER_IMAGE}:${TAG}
+                """
             }
         }
+    }
+}
 
         stage('Push Docker Image') {
             steps {
